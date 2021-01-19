@@ -42,7 +42,11 @@ class Stat_Object:
         from math import sqrt
         tup = self.data
         
-        pop_var = self.population_variance()
+        def pop_var(tup):
+            mu = sum(tup)/len(tup)
+            sq_devs = [(i-mu)**2 for i in tup]
+            variance = (sum(sq_devs)) / len(tup)
+            return variance
         
         sd = sqrt(pop_var(tup)) # take root of population variance
         

@@ -27,10 +27,9 @@ class Stat_Object:
     
     def population_variance(self,dec=None):
     
-   
-        mu = sum(self.data)/self.total
-        sq_devs = [(i-mu)**2 for i in self.data]
-        variance = (sum(sq_devs)) / self.total
+        mu = sum(self.data)/self.total # calculate the mean and assign to variable
+        sq_devs = [(i-mu)**2 for i in self.data] # for each datapoint calculate the deviations, square and store them
+        variance = (sum(sq_devs)) / self.total # sum the stored squared deviations and divide by the # of datapoints 
         
         if dec != None:
             variance = round(variance,dec)
@@ -49,7 +48,7 @@ class Stat_Object:
             variance = (sum(sq_devs)) / len(tup)
             return variance
         
-        sd = sqrt(pop_var(tup))
+        sd = sqrt(pop_var(tup)) # take root of population variance
         
         if dec != None:
             sd = round(sd,dec)
@@ -64,11 +63,10 @@ class Stat_Object:
         tup = self.data
         
         xbar = sum(tup)/self.total
-        # for each data-point calculate the deviations, square- and store them
-        sq_devs = [(i-xbar)**2 for i in tup]
-        # sum the stored squared deviations
-        # divide by number of data points
-        variance = (sum(sq_devs)) / (self.total-1)
+        
+        sq_devs = [(i-xbar)**2 for i in tup] # for each data-point calculate the deviations, square- and store them
+
+        variance = (sum(sq_devs)) / (self.total-1) # sum the stored squared deviations and divide by number of data point
         
         if dec != None:
             variance = round(variance,dec)

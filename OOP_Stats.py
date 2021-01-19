@@ -42,13 +42,9 @@ class Stat_Object:
         from math import sqrt
         tup = self.data
         
-        def pop_var(tup):
-            mu = sum(tup)/len(tup)
-            sq_devs = [(i-mu)**2 for i in tup]
-            variance = (sum(sq_devs)) / len(tup)
-            return variance
+        pop_var = self.population_variance(local=True)
         
-        sd = sqrt(pop_var(tup)) # take root of population variance
+        sd = sqrt(pop_var) # take root of population variance
         
         if dec != None:
             sd = round(sd,dec)
@@ -78,14 +74,9 @@ class Stat_Object:
         from math import sqrt
         tup = self.data
         
-        def sample_var(tup): 
-
-            xbar = sum(tup)/len(tup)
-            sq_devs = [(i-xbar)**2 for i in tup]
-            variance = (sum(sq_devs)) / (len(tup)-1)
-            return variance
+        sample_var = self.sample_variance(local=True)
         
-        sd = sqrt(sample_var(tup)) # take root of sample variance
+        sd = sqrt(sample_var) # take root of sample variance
         
         if dec != None:
             sd = round(sd,dec)

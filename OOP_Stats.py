@@ -25,7 +25,7 @@ class Stat_Object:
         
         return f'the mean is {mu}'
     
-    def population_variance(self,dec=None):
+    def population_variance(self,dec=None,local=False):
     
         mu = sum(self.data)/self.total # calculate the mean and assign to variable
         sq_devs = [(i-mu)**2 for i in self.data] # for each datapoint calculate the deviations, square and store them
@@ -34,7 +34,7 @@ class Stat_Object:
         if dec != None:
             variance = round(variance,dec)
         
-        return f'the population variance for {self.name} is {variance}'
+        return variance if local else f'the population variance for {self.name} is {variance}'
 
     
     def population_sd(self,dec=None,local=False):
@@ -42,11 +42,7 @@ class Stat_Object:
         from math import sqrt
         tup = self.data
         
-        def pop_var(tup):
-            mu = sum(tup)/len(tup)
-            sq_devs = [(i-mu)**2 for i in tup]
-            variance = (sum(sq_devs)) / len(tup)
-            return variance
+        pop_var = self.population_variance()
         
         sd = sqrt(pop_var(tup)) # take root of population variance
         
@@ -55,7 +51,7 @@ class Stat_Object:
 
         return sd if local == True else f'the population standard deviation for {self.name} is {sd}'
     
-    def sample_variance(self,dec=None):
+    def sample_variance(self,dec=None,local=False):
         
     
         # calculate the mean and assign to variable
@@ -71,7 +67,7 @@ class Stat_Object:
         if dec != None:
             variance = round(variance,dec)
 
-        return f'the sample variance for {self.name} is {variance}'
+        return variance if local else f'the sample variance for {self.name} is {variance}'
     
     def sample_sd(self,dec=None,local=False):
     

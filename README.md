@@ -1,2 +1,5 @@
 # Statistics_with_OOP
-practicing OOP on statistics
+
+Here I practice my OOP fundamentals by coding things I learn in Statistics.
+
+

@@ -82,3 +82,48 @@ class Stat_Object:
             sd = round(sd,dec)
             
         return sd if local == True else f'the sample standard deviation for {self.name} is {sd}'
+    
+     def iqr(self,dec=None,local=False): # this method calculates the interquartile range
+        
+        tup = sorted(self.data)
+
+        if len(tup) % 2 == 0: # if iterable is even
+            median = (tup[int(len(tup)/2)] + tup[int(len(tup)/2 -1)])/2 # calculate median 
+
+            first_half = tup[:int(len(tup)/2)] # slice the iterable into first- and second half
+            second_half = tup[int(len(tup)/2):]
+
+            if len(first_half) % 2 == 0: # check parity first half
+                first_median = (first_half[int(len(first_half)/2)] + first_half[int(len(first_half)/2 -1)])/2 
+                second_median = (second_half[int(len(second_half)/2)] + second_half[int(len(second_half)/2 -1)])/2
+
+                IQR = second_median - first_median #calculate IQR
+            else:
+                first_median = first_half[int(len(first_half)/2-0.5)]
+                second_median = second_half[int(len(second_half)/2-0.5)]
+
+                IQR = second_median - first_median
+
+        else: # if iterable is odd
+            median = tup[int(len(tup)/2-0.5)]
+
+            first_half = tup[:int(len(tup)/2-0.5)]
+            second_half = tup[int(len(tup)/2-0.5 +1):]
+
+            if len(first_half) % 2 == 0: # check parity first half
+
+                first_median = (first_half[int(len(first_half)/2)] + first_half[int(len(first_half)/2 -1)])/2 
+                second_median = (second_half[int(len(second_half)/2)] + second_half[int(len(second_half)/2 -1)])/2
+
+                IQR = second_median - first_median
+            else:
+
+                first_median = first_half[int(len(first_half)/2-0.5)]
+                second_median = second_half[int(len(second_half)/2-0.5)]
+
+                IQR = second_median - first_median
+            
+        if dec != None:
+                IQR = round(IQR,dec)
+
+        return IQR if local else f'The IQR for {self.name} is {IQR}.'

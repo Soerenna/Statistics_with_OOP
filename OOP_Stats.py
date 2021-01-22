@@ -4,10 +4,10 @@ class Stat_Object:
     
     def __init__(self, name, *args,scope='unknown'):
     
-        self.name = name
-        self.data = args
-        self.total = len(args)
-        self.scope = 'unknown'
+        self.name = name # name of dataset
+        self.data = args # the dataset
+        self.total = len(args) # number of datapoints
+        self.scope = 'unknown' # wheter the dataset is a population or a sample
     
     # special methods
     
@@ -115,7 +115,7 @@ class Stat_Object:
                 first_median = (first_half[int(len(first_half)/2)] + first_half[int(len(first_half)/2 -1)])/2 
                 second_median = (second_half[int(len(second_half)/2)] + second_half[int(len(second_half)/2 -1)])/2
 
-                IQR = second_median - first_median
+                IQR = second_median - first_median 
             else:
 
                 first_median = first_half[int(len(first_half)/2-0.5)]
@@ -127,3 +127,58 @@ class Stat_Object:
                 IQR = round(IQR,dec)
 
         return IQR if local else f'The IQR for {self.name} is {IQR}.'
+
+    def MAD(self,dec=None,local=False): 
+        
+        # this function calculates the Mean Absolute Deviation
+    
+        absolute_deviations = []
+
+        mean = sum(self.data)/len(self.data) 
+
+        for data_point in self.data:
+
+            absolute_deviations.append(abs(data_point-mean)) # take absolute deviation for every datapoint
+
+        mad = (sum(absolute_deviations))/self.total # sum them and divide by number of points
+        
+        if dec != None:
+                mad = round(mad,dec)
+
+
+        return mad if local else f'The MAD for {self.name} is {mad}'
+    
+    def z_score(self,data_point=0,dec=None,local=False):
+    
+        scope_range = 'ps'
+        scope = ' '
+        
+        mu = sum(self.data)/self.total
+        
+        while not scope in scope_range: # ask for user input concerning scope of data
+            
+            scope = input('Is your data set a Population(p) or a Sample(s)?: ').lower() 
+            if not scope in 'ps':
+                print('Please enter either p or s.')
+        
+        if scope == 'p': # save this information about datset in attributes
+            self.scope = 'Population' 
+        else:
+            self.scope = 'Sample'
+            
+            
+        pop_z_score = (data_point - mu)/self.population_sd(local=True) # calculate z-scores
+        samp_z_score = (data_point - mu)/self.sample_sd(local=True)
+        
+        if dec != None:
+            pop_z_score = round(pop_z_score,dec)
+            samp_z_score = round(samp_z_score,dec)
+            
+        if local:
+            return pop_z_score if scope == 'p' else samp_z_score
+        else:
+            if scope == 'p':
+                return f'The population z-score for point {data_point} is {pop_z_score}'
+            else:
+                return f'The sample z-score for point {data_point} is {samp_z_score}'
+    

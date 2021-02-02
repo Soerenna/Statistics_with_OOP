@@ -25,6 +25,22 @@ class Stat_Object:
         
         return f'the mean is {mu}'
     
+    def median(x,dec=None,local=False):
+        
+        """return the median of an iterable x
+            
+            e.g. median([1,2,3]) --> 2"""
+        
+        if len(x) % 2 == 0:
+            i = int(len(x)/2)
+            median = (x[i-1]+x[i])/2
+        else:
+            median = x[int((len(x)-1)/2)]
+            
+        if dec != None:
+            median = round(median,dec)
+        return median if local else f'the median of {self.name} is {median}'
+    
     def population_variance(self,dec=None,local=False):
     
         mu = sum(self.data)/self.total # calculate the mean and assign to variable
@@ -53,7 +69,6 @@ class Stat_Object:
     
     def sample_variance(self,dec=None,local=False):
         
-    
         # calculate the mean and assign to variable
         
         tup = self.data

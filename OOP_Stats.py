@@ -25,12 +25,12 @@ class Stat_Object:
         
         return f'the mean is {mu}'
     
-    def median(x,dec=None,local=False):
+    def median(self,dec=None,local=False):
         
         """return the median of an iterable x
             
             e.g. median([1,2,3]) --> 2"""
-        
+        x = self.data
         if len(x) % 2 == 0:
             i = int(len(x)/2)
             median = (x[i-1]+x[i])/2
@@ -98,7 +98,7 @@ class Stat_Object:
             
         return sd if local == True else f'the sample standard deviation for {self.name} is {sd}'
     
-     def iqr(self,dec=None,local=False): # this method calculates the interquartile range
+    def iqr(self,dec=None,local=False): # this method calculates the interquartile range
         
         tup = sorted(self.data)
 
@@ -196,4 +196,3 @@ class Stat_Object:
                 return f'The population z-score for point {data_point} is {pop_z_score}'
             else:
                 return f'The sample z-score for point {data_point} is {samp_z_score}'
-    

@@ -16,7 +16,7 @@ class Stat_Object:
         
     # here are the user-defined methods for the data
     # the 'local' parameter will determine the output of the function i.e. if true it wil output a value, when false it outputs a string
-    
+    # the 'custom' parameter will allow for custom data input in class methods
     def mean(self,dec=None):
         
         mu = sum(self.data)/self.total
@@ -25,18 +25,24 @@ class Stat_Object:
         
         return f'the mean is {mu}'
     
-    def median(self,dec=None,local=False):
+    def median(self,dec=None,local=False,custom=False):
         
-        """return the median of an iterable x
+        """return the median of an iterable
+            dec: determines how to output is rounded
+            local: if it is set to True the output wil be a number instead of string
+            custom: allows for custom data input instead of class instance data
             
-            e.g. median([1,2,3]) --> 2"""
-        x = self.data
+            e.g. median([1,2,3],local=True) --> 2"""
+        
+        if custom:
+            x = custom
+        else:
+            x = self.data
         if len(x) % 2 == 0:
             i = int(len(x)/2)
             median = (x[i-1]+x[i])/2
         else:
-            median = x[int((len(x)-1)/2)]
-            
+            median = x[int((len(x)-1)/2)]  
         if dec != None:
             median = round(median,dec)
         return median if local else f'the median of {self.name} is {median}'
@@ -98,54 +104,49 @@ class Stat_Object:
             
         return sd if local == True else f'the sample standard deviation for {self.name} is {sd}'
     
-    def iqr(self,dec=None,local=False): # this method calculates the interquartile range
+    def iqr(self,dec=None,local=False,custom=False):
         
-        tup = sorted(self.data)
-
-        if len(tup) % 2 == 0: # if iterable is even
-            median = (tup[int(len(tup)/2)] + tup[int(len(tup)/2 -1)])/2 # calculate median 
-
-            first_half = tup[:int(len(tup)/2)] # slice the iterable into first- and second half
-            second_half = tup[int(len(tup)/2):]
-
-            if len(first_half) % 2 == 0: # check parity first half
-                first_median = (first_half[int(len(first_half)/2)] + first_half[int(len(first_half)/2 -1)])/2 
-                second_median = (second_half[int(len(second_half)/2)] + second_half[int(len(second_half)/2 -1)])/2
-
-                IQR = second_median - first_median #calculate IQR
-            else:
-                first_median = first_half[int(len(first_half)/2-0.5)]
-                second_median = second_half[int(len(second_half)/2-0.5)]
-
-                IQR = second_median - first_median
-
-        else: # if iterable is odd
-            median = tup[int(len(tup)/2-0.5)]
-
-            first_half = tup[:int(len(tup)/2-0.5)]
-            second_half = tup[int(len(tup)/2-0.5 +1):]
-
-            if len(first_half) % 2 == 0: # check parity first half
-
-                first_median = (first_half[int(len(first_half)/2)] + first_half[int(len(first_half)/2 -1)])/2 
-                second_median = (second_half[int(len(second_half)/2)] + second_half[int(len(second_half)/2 -1)])/2
-
-                IQR = second_median - first_median 
-            else:
-
-                first_median = first_half[int(len(first_half)/2-0.5)]
-                second_median = second_half[int(len(second_half)/2-0.5)]
-
-                IQR = second_median - first_median
+        """return the inter quartile range of an iterable
+            dec: determines how to output is rounded
+            local: if it is set to True the output wil be a number instead of string
+            custom: allows for custom data input instead of class instance data
             
-        if dec != None:
-                IQR = round(IQR,dec)
+            e.g. iqr([1,2,3,4,5,6,7],local=True) --> 4.0"""
+    
+        def splitter(X):
+            if len(X) % 2 == 0:
+                i = int(len(X)/2)
+                first_half = X[:i]
+                second_half = X[i:]
+            else:
+                i = int(len(X)//2)
+                first_half = X[:i]
+                second_half = X[i+1:]
 
-        return IQR if local else f'The IQR for {self.name} is {IQR}.'
+            return (first_half,second_half)
+        
+        if custom:
+            S = sorted(custom)
+        else:
+            S = sorted(self.data)
+        
+        q1 = self.median(custom=splitter(S)[0],local=True)
+        q3 = self.median(custom=splitter(S)[1],local=True)
+
+        iqr = q3 - q1
+        
+        if dec != None:
+            iqr = round(iqr,dec)
+        
+        return iqr if local else f'The inter quartile range for {self.name} is {iqr}'
 
     def MAD(self,dec=None,local=False): 
         
-        # this function calculates the Mean Absolute Deviation
+        """return the mean absolute deviation of an iterable
+            dec: determines how to output is rounded
+            local: if it is set to True the output wil be a number instead of string
+            
+            e.g. MAD([1,2,3,4],local=True) --> 1.0 """
     
         absolute_deviations = []
 
@@ -163,8 +164,16 @@ class Stat_Object:
 
         return mad if local else f'The MAD for {self.name} is {mad}'
     
-    def z_score(self,data_point=0,dec=None,local=False):
-    
+    def z_score(self,datapoint=0,dec=None,local=False):
+        
+        """return the z-score (standard score) of a datapoint inside the dataset
+            datapoint: the datapoint you wish to calculate the z-score for
+            dec: determines how to output is rounded
+            local: if it is set to True the output wil be a number instead of string
+            custom: allows for custom data input instead of class instance data
+            
+            e.g. if data = [1,2,3,4] then z_score(datapoint=3,local=True,round=2) --> 0.45"""
+        
         scope_range = 'ps'
         scope = ' '
         
@@ -182,8 +191,8 @@ class Stat_Object:
             self.scope = 'Sample'
             
             
-        pop_z_score = (data_point - mu)/self.population_sd(local=True) # calculate z-scores
-        samp_z_score = (data_point - mu)/self.sample_sd(local=True)
+        pop_z_score = (datapoint - mu)/self.population_sd(local=True) # calculate z-scores
+        samp_z_score = (datapoint - mu)/self.sample_sd(local=True)
         
         if dec != None:
             pop_z_score = round(pop_z_score,dec)
@@ -193,6 +202,6 @@ class Stat_Object:
             return pop_z_score if scope == 'p' else samp_z_score
         else:
             if scope == 'p':
-                return f'The population z-score for point {data_point} is {pop_z_score}'
+                return f'The population z-score for point {datapoint} is {pop_z_score}'
             else:
-                return f'The sample z-score for point {data_point} is {samp_z_score}'
+                return f'The sample z-score for point {datapoint} is {samp_z_score}'
